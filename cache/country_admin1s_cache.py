@@ -14,7 +14,7 @@ def calculate_country(country):
         filters = {'urgency': set(), 'severity': set(), 'certainty': set()}
         for alert_admin1 in admin1.capfeedalertadmin1_set.all():
             alert = alert_admin1.alert
-            for info in alert.capfeedalertinfo_set.all():
+            for info in alert.get_active_alert_info_queryset().all():
                 filters['urgency'].add(info.urgency)
                 filters['severity'].add(info.severity)
                 filters['certainty'].add(info.certainty)

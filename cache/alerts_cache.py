@@ -27,7 +27,7 @@ def calculate_country_alerts():
     print('Updating country alerts cache...')
     existing_alert_set = cache.get('alertset', set())
     existing_alert_iso3 = cache.get('alertiso3', {})
-    alert_set = set(CapFeedAlert.objects.values_list('id', flat=True))
+    alert_set = set(CapFeedAlert.get_active_queryset().values_list('id', flat=True))
     old_alerts = existing_alert_set.difference(alert_set)
     new_alerts = alert_set.difference(existing_alert_set)
     for old_id in old_alerts:
@@ -66,7 +66,7 @@ def update_alerts_cache():
     print('Updating alerts cache...')
     alerts_data = cache.get('alerts', {'alerts': []})
     existing_alert_set = cache.get('alertset2', set())
-    alert_set = set(CapFeedAlert.objects.values_list('id', flat=True))
+    alert_set = set(CapFeedAlert.get_active_queryset().values_list('id', flat=True))
     old_alerts = existing_alert_set.difference(alert_set)
     new_alerts = alert_set.difference(existing_alert_set)
     for old_id in old_alerts:
@@ -108,7 +108,7 @@ def calculate_alert_data(alert, full = True):
     alert_summary_data['admin1'] = alert_data['admin1']
     
     alert_data['info'] = []
-    for info in alert.capfeedalertinfo_set.all():
+    for info in alert.get_active_alert_info_queryset().all():
         info_data = info.to_dict()
         if alert_summary_data['category'] == '':
             alert_summary_data['category'] = info_data['category']
@@ -142,7 +142,7 @@ def calculate_alert_data(alert, full = True):
     cache.set("alert_summary" + str(alert.id), alert_summary_data, timeout = None)
     
     alert_data['info'] = []
-    for info in alert.capfeedalertinfo_set.all():
+    for info in alert.get_active_alert_info_queryset().all():
         info_data = {'category': info.category, 'event': info.event}
         alert_data['info'].append(info_data)
     

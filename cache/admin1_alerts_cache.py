@@ -20,7 +20,7 @@ def calculate_country(country):
             else:
                 alert_data['admin1_known'] = True
             alert_data['info'] = []
-            for info in alert.capfeedalertinfo_set.all():
+            for info in alert.get_active_alert_info_queryset().all():
                 info_data = info.to_dict()
                 info_data['parameter'] = []
                 parameters = info.capfeedalertinfoparameter_set.all()

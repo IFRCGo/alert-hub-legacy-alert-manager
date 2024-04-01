@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django.db import models
 
 # These use the same database as the CAP Aggregator
@@ -96,6 +97,7 @@ class CapFeedAlert(models.Model):
     incidents = models.TextField()
     country = models.ForeignKey('CapFeedCountry', models.DO_NOTHING)
     feed = models.ForeignKey('CapFeedFeed', models.DO_NOTHING)
+    is_expired = models.BooleanField(default=False)
 
     class Meta:
         managed = False
@@ -119,6 +121,17 @@ class CapFeedAlert(models.Model):
         alert_dict['references'] = self.references
         alert_dict['incidents'] = self.incidents
         return alert_dict
+
+    @classmethod
+    def get_active_queryset(cls):
+        return cls.objects.filter(is_expired=False)
+
+    def get_active_alert_info_queryset(self):
+        return CapFeedAlertInfo.objects.filter(
+            alert_id=self.id,
+            expires__gt=timezone.now(),
+        )
+
 
 class CapFeedAlertAdmin1(models.Model):
     id = models.BigAutoField(primary_key=True)
