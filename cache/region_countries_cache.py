@@ -6,7 +6,7 @@ from .models import CapFeedRegion
 def calculate_country(region_data, country):
     filters = {'urgency': set(), 'severity': set(), 'certainty': set()}
     for alert in country.capfeedalert_set.all():
-        for info in alert.capfeedalertinfo_set.all():
+        for info in alert.get_active_alert_info_queryset().all():
             filters['urgency'].add(info.urgency)
             filters['severity'].add(info.severity)
             filters['certainty'].add(info.certainty)
